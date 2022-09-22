@@ -6,7 +6,7 @@ typedef struct nodo
     int matricula;
     char nombre[100];
     int semestre;
-    int telefono;
+    long long int telefono;
     char facultad[100];
     char generacion[20];
     char tutor[100];
@@ -80,7 +80,7 @@ void insertarNodo()
     printf(" Ingrese el semestre: ");
     scanf("%d", &nuevo->semestre);
     printf(" Ingrese el telefono: ");
-    scanf("%d", &nuevo->telefono);
+    scanf("%lld", &nuevo->telefono);
     printf(" Ingrese la facultad: ");
     scanf(" %[^\n]s", &nuevo->facultad);
     printf(" Ingrese la generacion: ");
@@ -122,7 +122,7 @@ void buscarNodo()
                 printf("\n El nodo con la matricula ( %d ) Encontrado\n\n", nodoBuscado);
                 printf("\n %s", actual->nombre);
                 printf("\n %d", actual->semestre);
-                printf("\n %d", actual->telefono);
+                printf("\n %lld", actual->telefono);
                 printf("\n %s", actual->facultad);
                 printf("\n %s", actual->generacion);
                 printf("\n %s", actual->tutor);
@@ -165,7 +165,7 @@ void modificarNodo()
                 printf(" Ingrese el nuevo semestre: ");
                 scanf("%d", &actual->semestre);
                 printf(" Ingrese el nuevo telefono: ");
-                scanf("%d", &actual->telefono);
+                scanf("%lld", &actual->telefono);
                 printf(" Ingrese la nueva facultad: ");
                 scanf(" %[^\n]s", &actual->facultad);
                 printf(" Ingrese la nueva generacion: ");
@@ -254,7 +254,7 @@ void desplegarLista()
             printf("\n %d", actual->matricula);
             printf("\n %s", actual->nombre);
             printf("\n %d", actual->semestre);
-            printf("\n %d", actual->telefono);
+            printf("\n %lld", actual->telefono);
             printf("\n %s", actual->facultad);
             printf("\n %s", actual->generacion);
             printf("\n %s", actual->tutor);
