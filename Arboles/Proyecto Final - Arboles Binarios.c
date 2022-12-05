@@ -1,310 +1,300 @@
 #include <conio.h>
 #include <stdio.h>
 #include <stdlib.h>
-//Version 1, 02/12/2022
+// Version 3b, 04/12/2022
+// Proyecto Final de Estructuras de Datos
+// Arbol Binario con Funciones (Completo)
 
-//Declaracion de la estructura principal
-struct node
+// Declaracion de la estructura principal
+struct nodo
 {
-    int data;
-    struct node *left;
-    struct node *right;
+    int dato;
+    struct nodo *izquierda;
+    struct nodo *derecha;
 };
 
-//Declaracion de elementos de la estructura auxiliares
-struct node *head = NULL, *newnode, *parentptr, *temp;
+// Declaracion de elementos de la estructura auxiliares
+struct nodo *raiz = NULL, *nuevonodo, *padreptr, *temp;
 
-//Declaracion de prototipos de funciones
-struct node *findSmallestElement(struct node *tree);
-struct node *findLargestElement(struct node *tree);
-struct node *minValueNode(struct node *node);
-struct node *deleteNode(struct node *root, int key);
-
-void insertElement(struct node *node);
-void preorderTraversal(struct node *node);
-void inorderTraversal(struct node *node);
-void postorderTraversal(struct node *node);
-void deleteTree(struct node *node);
-int totalNodes(struct node *tree);
-int totalExternalNodes(struct node *tree);
-int totalInternalNodes(struct node *tree);
-int Height(struct node *tree);
-unsigned int getLeafCount(struct node* tree);
+// Declaracion de prototipos de funciones
+void insertarNodo(struct nodo *nodo);
+void recorridoPreorden(struct nodo *nodo);
+void recorridoInorden(struct nodo *nodo);
+void recorridoPostorden(struct nodo *nodo);
+int nivelArbol(struct nodo *arbol);
+int totalNodos(struct nodo *arbol);
+unsigned int totalHojas(struct nodo *arbol);
+int altura(struct nodo *arbol);
+struct nodo *nodoMayorValor(struct nodo *arbol);
+void borrarArbol(struct nodo *nodo);
+void menu(void);
 
 // Funcion main
 int main()
 {
-    int tn, TEN, TIN, TLC, height;
-    int option = 0;
-    printf("\n**********--Programa de Estructura de Datos - Arbol--**********");
-    printf("\n***************************************************");
-    printf("\n***--------Menu Principal--------***");
-    printf("\nTeclee la opcion que desee.");
-    printf("\n1)  Insertar Elemento\n2) Recorrido Preorden\n3) Recorrido Entreorden\n4) Recorrido Postorden\n5)  Elemento mas Pequeno\n6)  Elemento mas Grande\n7)  Eliminar un Elemento\n8)  Contar el Numero Total de Nodos\n9)  Numero de Nodos Externos\n10) Numero de Nodos Internos\n11) Altura del Arbol\n12) Borrar Todo El Arbol\n13) Numero de Nodos Hojas\n14) Salir");
+    int TN, TH, ALT;
+    int opcion = 0;
+    menu();
     do
     {
-        printf("\nUsted quiere realizar la siguiente operacion: ");
-        scanf("%d", &option);
-        switch (option)
+        printf("\nEscoja una opcion: ");
+        scanf("%d", &opcion);
+        switch (opcion)
         {
+        case 0:
+            menu();
+            break;
+
         case 1:
-            insertElement(head);
+            insertarNodo(raiz);
+            printf("\nNodo insertado correctamente");
             break;
 
         case 2:
-            preorderTraversal(head);
+            printf("\nPreorden: (raiz, izquierdo, derecho)\n");
+            recorridoPreorden(raiz);
             break;
 
         case 3:
-            inorderTraversal(head);
+            printf("\nInorden: (izquierdo, raiz, derecho)\n");
+            recorridoInorden(raiz);
             break;
 
         case 4:
-            postorderTraversal(head);
+            printf("\nPostorden: (izquierdo, derecho, raiz)\n");
+            recorridoPostorden(raiz);
             break;
 
         case 5:
-            printf("\nEl elemento mas pequeno es: %d", findSmallestElement(head)->data);
+            printf("\nEl nivel del arbol es: %d\n", nivelArbol(raiz));
             break;
 
         case 6:
-            printf("\nEl elemento mas largo es: %d", findLargestElement(head)->data);
+            TN = totalNodos(raiz);
+            printf("\nEl numero total de nodos es: %d\n", TN);
             break;
 
         case 7:
-            printf("\nInserta el valor que quieras borrar: ");
-            int key;
-            scanf("%d", &key);
-            deleteNode(head, key);
+            TH = totalHojas(raiz);
+            printf("\nEl numero de nodos hojas es: %d\n", TH);
             break;
 
         case 8:
-            tn = totalNodes(head);
-            printf("\nEl numero total de nodos es: %d", tn);
+            ALT = altura(raiz);
+            printf("\nLa altura del arbol es: %d\n", ALT);
             break;
 
         case 9:
-            TEN = totalExternalNodes(head);
-            printf("\nEl numero de nodos externos es: %d", TEN);
+            if (raiz == NULL)
+            {
+                printf("\nAdvertencia: El arbol esta vacio.\n");
+                break;
+            }
+            printf("\nEl nodo con mayor valor es: %d\n", nodoMayorValor(raiz)->dato);
             break;
 
         case 10:
-            TIN = totalInternalNodes(head);
-            printf("\nEl numero de nodos internos es: %d", TIN);
+            if (raiz == NULL)
+            {
+                printf("\nAdvertencia: El arbol esta vacio.\n");
+            }
+            borrarArbol(raiz);
+            printf("\nEl arbol ha sido borrado correctamente.\n");
             break;
 
         case 11:
-            height = Height(head);
-            printf("\nLa altura del arbol es: %d", height);
-            break;
-
-        case 12:
-            deleteTree(head);
-            break;
-
-        case 13:
-            TLC = getLeafCount(head);
-            printf("\nEl numero de nodos hojas es: %d", TLC);
-            break;
-
-        case 14:
-            return 0;
+            printf("\nPrograma finalizado.\n");
+            system("pause");
             break;
 
         default:
             printf("\nAdvertencia: Opcion invalida.\n");
             break;
         }
-    } while (option != 14);
+    } while (opcion != 11);
     return 0;
 }
 
-//Definicion de las funciones
-struct node *findSmallestElement(struct node *tree)
+// Definicion de las funciones
+void insertarNodo(struct nodo *arbol)
 {
-    if ((tree == NULL) || (tree->left == NULL))
-        return tree;
-    else
-        return findSmallestElement(tree->left);
-}
-
-struct node *findLargestElement(struct node *tree)
-{
-    if ((tree == NULL) || (tree->right == NULL))
-        return tree;
-    else
-        return findLargestElement(tree->right);
-}
-
-struct node *minValueNode(struct node *node)
-{
-    struct node *current = node;
-
-    /* Loop hacia abajo para encontrar la hoja más a la izquierda */
-    while (current && current->left != NULL)
-        current = current->left;
-
-    return current;
-}
-
-struct node *deleteNode(struct node *root, int key)
-{
-
-    if (root == NULL)
-        return root;
-
-    if (key < root->data)
-        root->left = deleteNode(root->left, key);
-
-    else if (key > root->data)
-        root->right = deleteNode(root->right, key);
-
-    else
-    {
-        // Nodo con solo 1 hijo o ningun hijo
-        if (root->left == NULL)
-        {
-            struct node *temp = root->right;
-            free(root);
-            return temp;
-        }
-        else if (root->right == NULL)
-        {
-            struct node *temp = root->left;
-            free(root);
-            return temp;
-        }
-
-        struct node *temp = minValueNode(root->right);
-
-        root->data = temp->data;
-
-        root->right = deleteNode(root->right, temp->data);
-    }
-    return root;
-}
-
-void insertElement(struct node* tree)
-{
-    newnode = (struct node *)malloc(sizeof(struct node));
+    nuevonodo = (struct nodo *)malloc(sizeof(struct nodo));
     printf("\nInserta el valor que desees agregar: ");
-    scanf("%d", &newnode->data);
-    int val = newnode->data;
-    newnode->left = NULL;
-    newnode->right = NULL;
+    scanf("%d", &nuevonodo->dato);
+    int val = nuevonodo->dato;
+    nuevonodo->izquierda = NULL;
+    nuevonodo->derecha = NULL;
 
-    if (head == NULL)
+    if (raiz == NULL)
     {
-        head = newnode;
+        raiz = nuevonodo;
     }
     else
     {
-        temp = head;
+        temp = raiz;
         while (temp != NULL)
         {
-            parentptr = temp;
-            if (val < temp->data)
-                temp = temp->left;
+            padreptr = temp;
+            if (val < temp->dato)
+                temp = temp->izquierda;
             else
-                temp = temp->right;
+                temp = temp->derecha;
         }
-        if (val < parentptr->data)
-            parentptr->left = newnode;
+        if (val < padreptr->dato)
+            padreptr->izquierda = nuevonodo;
         else
-            parentptr->right = newnode;
+            padreptr->derecha = nuevonodo;
     }
 }
 
-void preorderTraversal(struct node *node)
+void recorridoPreorden(struct nodo *nodo)
 {
-    if (node == NULL)
-        return;
-
-    printf("%d ", node->data);
-    preorderTraversal(node->left);
-    preorderTraversal(node->right);
-}
-
-void inorderTraversal(struct node *node)
-{
-    if (node == NULL)
-        return;
-
-    inorderTraversal(node->left);
-    printf("%d ", node->data);
-    inorderTraversal(node->right);
-}
-
-void postorderTraversal(struct node *node)
-{
-    if (node == NULL)
-        return;
-
-    postorderTraversal(node->left);
-    postorderTraversal(node->right);
-    printf("%d ", node->data);
-}
-
-int totalNodes(struct node *tree)
-{
-    if (tree == NULL)
-        return 0;
-    else
-        return (totalNodes(tree->left) + totalNodes(tree->right) + 1);
-}
-
-int totalExternalNodes(struct node *tree)
-{
-    if (tree == NULL)
-        return 0;
-    else if ((tree->left == NULL) && (tree->right == NULL))
-        return 1;
-    else
-        return (totalExternalNodes(tree->left) + totalExternalNodes(tree->right));
-}
-
-int totalInternalNodes(struct node *tree)
-{
-    if ((tree == NULL) || ((tree->left == NULL) && (tree->right == NULL)))
-        return 0;
-    else
-        return (totalInternalNodes(tree->left) + totalInternalNodes(tree->right) + 1);
-}
-
-int Height(struct node *tree)
-{
-    int leftheight, rightheight;
-    if (tree == NULL)
-        return -1;
-
-    leftheight = Height(tree->left);
-    rightheight = Height(tree->right);
-
-    if (leftheight > rightheight)
-        return (leftheight + 1);
-    else
-        return (rightheight + 1);
-}
-
-void deleteTree(struct node *tree)
-{
-    head = NULL;
-    if (tree != NULL)
+    if (nodo == NULL)
     {
-        deleteTree(tree->left);
-        deleteTree(tree->right);
-        free(tree);
-    }
-    else
         return;
+    }
+
+    printf("%d ", nodo->dato);
+    recorridoPreorden(nodo->izquierda);
+    recorridoPreorden(nodo->derecha);
 }
 
-unsigned int getLeafCount(struct node* tree)
+void recorridoInorden(struct nodo *nodo)
 {
-    if(tree == NULL)
-        return 0;
-    if(tree->left == NULL && tree->right == NULL)
+    if (nodo == NULL)
+    {
+        return;
+    }
+
+    recorridoInorden(nodo->izquierda);
+    printf("%d ", nodo->dato);
+    recorridoInorden(nodo->derecha);
+}
+
+void recorridoPostorden(struct nodo *nodo)
+{
+    if (nodo == NULL)
+    {
+        return;
+    }
+
+    recorridoPostorden(nodo->izquierda);
+    recorridoPostorden(nodo->derecha);
+    printf("%d ", nodo->dato);
+}
+
+int nivelArbol(struct nodo *arbol)
+{
+    int a = 0, b = 0;
+    if (arbol == NULL)
+    {
         return 1;
+    }
     else
-        return getLeafCount(tree->left) + getLeafCount(tree->right);
+    {
+        a = nivelArbol(arbol->izquierda) + 1;
+        b = nivelArbol(arbol->derecha) + 1;
+    }
+
+    if (a >= b)
+    {
+        return a++; // Suma la raiz
+    }
+    else
+    {
+        return b++; // Suma la raiz
+    }
+}
+
+int totalNodos(struct nodo *arbol)
+{
+    if (arbol == NULL)
+    {
+        return 0;
+    }
+    else
+    {
+        return (totalNodos(arbol->izquierda) + totalNodos(arbol->derecha) + 1);
+    }
+}
+
+unsigned int totalHojas(struct nodo *arbol)
+{
+    if (arbol == NULL)
+    {
+        return 0;
+    }
+
+    if (arbol->izquierda == NULL && arbol->derecha == NULL)
+    {
+        return 1;
+    }
+    else
+    {
+        return totalHojas(arbol->izquierda) + totalHojas(arbol->derecha);
+    }
+}
+
+int altura(struct nodo *arbol)
+{
+    int izquierdaAltura, derechaAltura;
+
+    if (arbol == NULL)
+    {
+        return -1;
+    }
+
+    izquierdaAltura = altura(arbol->izquierda);
+    derechaAltura = altura(arbol->derecha);
+
+    if (izquierdaAltura > derechaAltura)
+    {
+        return (izquierdaAltura + 1);
+    }
+    else
+    {
+        return (derechaAltura + 1);
+    }
+}
+
+struct nodo *nodoMayorValor(struct nodo *arbol)
+{
+    if ((arbol == NULL) || (arbol->derecha == NULL))
+    {
+        return arbol;
+    }
+    else
+    {
+        return nodoMayorValor(arbol->derecha);
+    }
+}
+
+void borrarArbol(struct nodo *arbol)
+{
+    raiz = NULL;
+
+    if (arbol != NULL)
+    {
+        borrarArbol(arbol->izquierda);
+        borrarArbol(arbol->derecha);
+        free(arbol);
+    }
+    else
+    {
+        return;
+    }
+}
+
+void menu()
+{
+    printf("\n|-----------------------------------------------------------------|");
+    printf("\n|                        *ARBOLES BINARIOS*                       |");
+    printf("\n|--------------------------------|--------------------------------|");
+    printf("\n| 1. Insertar Nodo               | 2. Recorrido Preorden          |");
+    printf("\n| 3. Recorrido Inorden           | 4. Recorrido Postordem         |");
+    printf("\n| 5. Nivel del Arbol             | 6. Cantidad de Nodos del Arbol |");
+    printf("\n| 7. Cantidad de Hojas del Arbol | 8. Altura del Arbol            |");
+    printf("\n| 9. Nodo con Mayor Valor        | 10. Borrar el Arbol            |");
+    printf("\n| 11. Salir                      | 0. Menu                        |");
+    printf("\n|--------------------------------|--------------------------------|");
 }
